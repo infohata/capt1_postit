@@ -31,3 +31,17 @@ class PostDetailUpdateDeleteAPI(generics.RetrieveUpdateDestroyAPIView):
             return self.update(request, *args, **kwargs)
         else:
             raise exceptions.ValidationError(_('you cannot change posts not of your own').capitalize())
+
+
+class CommentListCreateAPI(generics.ListCreateAPIView):
+    queryset = models.Comment.objects.all()
+    serializer_class = serializers.CommentSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        post = models.Post.objects.get(pk=self.kwargs['pk'])
+        serializer.save(user=self.request.user, post=post)
+
+    def get_queryset(self):
+        post = models.Post.objects.get(pk=self.kwargs['pk'])
+        return models.Comment.objects.filter(post=post)
