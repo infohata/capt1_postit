@@ -20,14 +20,14 @@ class PostDetailUpdateDeleteAPI(generics.RetrieveUpdateDestroyAPIView):
 
     def delete(self, request, *args, **kwargs):
         post = models.Post.objects.filter(pk=kwargs['pk'], user=self.request.user)
-        if post.exists:
+        if post.exists():
             return self.destroy(request, *args, **kwargs)
         else:
             raise exceptions.ValidationError(_('you cannot delete posts not of your own').capitalize())
 
     def put(self, request, *args, **kwargs):
         post = models.Post.objects.filter(pk=kwargs['pk'], user=self.request.user)
-        if post.exists:
+        if post.exists():
             return self.update(request, *args, **kwargs)
         else:
             raise exceptions.ValidationError(_('you cannot change posts not of your own').capitalize())
