@@ -45,3 +45,23 @@ class CommentListCreateAPI(generics.ListCreateAPIView):
     def get_queryset(self):
         post = models.Post.objects.get(pk=self.kwargs['pk'])
         return models.Comment.objects.filter(post=post)
+
+
+class CommentDetailUpdateDeleteAPI(generics.RetrieveUpdateDestroyAPIView):
+    queryset = models.Comment.objects.all()
+    serializer_class = serializers.CommentSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def delete(self, request, *args, **kwargs):
+        comment = models.Comment.objects.filter(pk=kwargs['pk'], user=self.request.user)
+        if comment.exists():
+            return self.destroy(request, *args, **kwargs)
+        else:
+            raise exceptions.ValidationError(_('you cannot delete comments not of your own').capitalize())
+    
+    def put(self, request, *args, **kwargs):
+        comment = models.Comment.objects.filter(pk=kwargs['pk'], user=self.request.user)
+        if comment.exists():
+            return self.update(request, *args, **kwargs)
+        else:
+            raise exceptions.ValidationError(_('you cannot change comments not of your own').capitalize())

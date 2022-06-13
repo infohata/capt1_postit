@@ -6,4 +6,5 @@ urlpatterns = [
     path('api/posts/', views.PostListCreateAPI.as_view()),
     path('api/posts/<int:pk>/', views.PostDetailUpdateDeleteAPI.as_view()),
     path('api/posts/<int:pk>/comments/', views.CommentListCreateAPI.as_view()),
+    path('api/comments/<int:pk>/', views.CommentDetailUpdateDeleteAPI.as_view()),
 ]
