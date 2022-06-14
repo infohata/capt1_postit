@@ -29,6 +29,9 @@ class PostLike(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.user.username
+
 
 class CommentLike(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
