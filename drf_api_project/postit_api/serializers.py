@@ -15,7 +15,7 @@ class CommentSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
     user_id = serializers.ReadOnlyField(source='user.id')
-    comments = CommentSerializer(many=True)
+    comments = CommentSerializer(many=True, read_only=True)
     likes = serializers.StringRelatedField(many=True, read_only=True, source='postlike_set')
     comment_count = serializers.SerializerMethodField()
     likes_count = serializers.SerializerMethodField()
@@ -23,7 +23,7 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Post
         fields = (
-            'id', 'user', 'user_id', 'title', 'body', 'created', 
+            'id', 'user', 'user_id', 'title', 'body', 'created', 'image',
             'comments', 'comment_count', 'likes_count', 'likes', 
         )
 

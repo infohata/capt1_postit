@@ -7,6 +7,7 @@ class Post(models.Model):
     body = models.CharField(max_length=4000)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
+    image = models.ImageField(upload_to='pictures', null=True, blank=True)
 
     class Meta:
         ordering = ['-created']
