@@ -1,5 +1,6 @@
 from rest_framework import generics, permissions, exceptions, mixins, status
 from rest_framework.response import Response
+from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from . import models
 from . import serializers
@@ -88,3 +89,9 @@ class PostLikeCreateAPI(generics.CreateAPIView, mixins.DestroyModelMixin):
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             raise exceptions.ValidationError(_('you do not like this post yet').capitalize())
+
+
+class UserCreateAPI(generics.CreateAPIView):
+    queryset = get_user_model().objects.all()
+    serializer_class = serializers.UserSerializer
+    permission_classes = [permissions.AllowAny]
