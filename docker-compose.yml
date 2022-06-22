@@ -1,0 +1,49 @@
+version: '3.7'
+services:
+  postit:
+    build: .
+    image: python:postit
+    container_name: postit.dev
+    tty: true
+    stdin_open: true
+    restart: always
+    ports:
+      - 8000:8000
+    volumes:
+      - ./drf_api_project/:/app/drf_api_project/
+    depends_on:
+      - db
+    links:
+      - db:postgres
+    command: >
+      bash -c "python wait_for_postgres.py &&
+               python manage.py migrate &&
+               python manage.py collectstatic --noinput &&
+               gunicorn -b 0.0.0.0:8000 drf_api_project.wsgi"
+  db:
+    image: postgres
+    container_name: postgres.postit
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - ./dbdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: postit
+      POSTGRES_USER: postit
+      POSTGRES_PASSWORD: nesakysiu
+      POSTGRES_PORT: 5432
+    # env_file: # ir viskas is environment: dalies i ta faila per lygybes
+    #   - database.env
+  nginx:
+    build: ./nginx/
+    image: nginx:postit
+    container_name: postit.nginx
+    restart: always
+    ports:
+      - 80:80
+    links:
+      - postit:postit
+    volumes:
+      - ./drf_api_project/static:/app/static
+      - ./drf_api_project/media:/app/media
